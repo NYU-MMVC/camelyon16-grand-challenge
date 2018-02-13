@@ -1,22 +1,9 @@
-import getpass
-
-users = ['arjun', 'millpc']
-
-user = getpass.getuser()
-print('user: %s' % user)
-
-assert user in users, 'User not Authorised!!'
-
-
-def is_running_on_server():
-    return user == 'arjun'
-
 
 data_subset = ['train', 'train-aug', 'validation', 'validation-aug', 'heatmap']
 
 THESIS_FIGURE_DIR = '/home/millpc/Documents/Arjun/Study/Thesis/Defense/Me/figures/'
 
-DATA_DIR = '/home/millpc/Documents/Arjun/Study/Thesis/CAMELYON16/data/CAMELYON16/'
+DATA_DIR = '/media/MMVCNYLOCAL_2/MMVC_NY/share_data/CAMELYON16/'
 
 TUMOR_WSI_PATH = DATA_DIR + 'TrainingData/Train_Tumor'
 NORMAL_WSI_PATH = DATA_DIR + 'TrainingData/Train_Normal'
@@ -94,6 +81,8 @@ EVAL_DIR_LIST = {
     'arjun': '/home/arjun/MS/Thesis/CAMELYON-16/Data/Processed/evaluation',
     'millpc': '/home/millpc/Documents/Arjun/Study/Thesis/CAMELYON16/evaluation'
 }
+
+user = 'arjun'
 
 TRAIN_TF_RECORDS_DIR = TRAIN_TF_RECORDS_DIR_LIST[user]
 TRAIN_DIR = TRAIN_DIR_LIST[user]

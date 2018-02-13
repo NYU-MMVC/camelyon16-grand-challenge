@@ -20,7 +20,7 @@ from __future__ import print_function
 
 import sys
 
-sys.path.insert(0, '/home/arjun/MS/Thesis/CAMELYON-16/source')
+sys.path.insert(0, '/media/MMVCNYLOCAL_2/MMVC_NY/share_data/github/camelyon16-grand-challenge')
 import copy
 import os.path
 import re

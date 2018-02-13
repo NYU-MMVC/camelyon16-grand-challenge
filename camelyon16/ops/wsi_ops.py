@@ -37,7 +37,8 @@ class PatchExtractor(object):
             b_y_end = int(bounding_box[1]) + int(bounding_box[3])
             X = np.random.random_integers(b_x_start, high=b_x_end, size=utils.NUM_POSITIVE_PATCHES_FROM_EACH_BBOX)
             Y = np.random.random_integers(b_y_start, high=b_y_end, size=utils.NUM_POSITIVE_PATCHES_FROM_EACH_BBOX)
-
+            X = np.minimum(X, tumor_gt_mask.shape[1]-1)
+            Y = np.minimum(Y, tumor_gt_mask.shape[0]-1)
             for x, y in zip(X, Y):
                 if int(tumor_gt_mask[y, x]) is utils.PIXEL_WHITE:
                     patch = wsi_image.read_region((x * mag_factor, y * mag_factor), 0,
@@ -79,7 +80,8 @@ class PatchExtractor(object):
             b_y_end = int(bounding_box[1]) + int(bounding_box[3])
             X = np.random.random_integers(b_x_start, high=b_x_end, size=utils.NUM_NEGATIVE_PATCHES_FROM_EACH_BBOX)
             Y = np.random.random_integers(b_y_start, high=b_y_end, size=utils.NUM_NEGATIVE_PATCHES_FROM_EACH_BBOX)
-
+            X = np.minimum(X, image_open.shape[1]-1)
+            Y = np.minimum(Y, image_open.shape[0]-1)
             for x, y in zip(X, Y):
                 if int(image_open[y, x]) is not utils.PIXEL_BLACK:
                     patch = wsi_image.read_region((x * mag_factor, y * mag_factor), 0,
@@ -121,8 +123,12 @@ class PatchExtractor(object):
             b_y_end = int(bounding_box[1]) + int(bounding_box[3])
             X = np.random.random_integers(b_x_start, high=b_x_end, size=utils.NUM_NEGATIVE_PATCHES_FROM_EACH_BBOX)
             Y = np.random.random_integers(b_y_start, high=b_y_end, size=utils.NUM_NEGATIVE_PATCHES_FROM_EACH_BBOX)
-
+            X = np.minimum(X, tumor_gt_mask.shape[1]-1)
+            X = np.minimum(X, image_open.shape[1]-1)
+            Y = np.minimum(Y, tumor_gt_mask.shape[0]-1)
+            Y = np.minimum(Y, image_open.shape[0]-1)
             for x, y in zip(X, Y):
+
                 if int(image_open[y, x]) is not utils.PIXEL_BLACK and int(tumor_gt_mask[y, x]) is not utils.PIXEL_WHITE:
                     # mask_gt does not contain tumor area
                     patch = wsi_image.read_region((x * mag_factor, y * mag_factor), 0,
@@ -383,7 +389,7 @@ class WSIOps(object):
     def get_bbox(cont_img, rgb_image=None):
         _, contours, _ = cv2.findContours(cont_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         rgb_contour = None
-        if rgb_image:
+        if rgb_image is not None:
             rgb_contour = rgb_image.copy()
             line_color = (255, 0, 0)  # blue color code
             cv2.drawContours(rgb_contour, contours, -1, line_color, 2)

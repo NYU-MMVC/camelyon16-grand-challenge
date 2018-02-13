@@ -1,5 +1,8 @@
 import glob
 import os
+import sys
+sys.path.append('..')
+sys.path.append('../..')
 
 import cv2
 import numpy as np
@@ -29,7 +32,7 @@ def extract_positive_patches_from_tumor_wsi(wsi_ops, patch_extractor, patch_inde
 
         bounding_boxes = wsi_ops.find_roi_bbox_tumor_gt_mask(np.array(tumor_gt_mask))
 
-        patch_index = patch_extractor.extract_positive_patches_from_tumor_region(wsi_image, np.array(tumor_gt_mask),
+        patch_index = patch_extractor.ß(wsi_image, np.array(tumor_gt_mask),
                                                                                  level_used, bounding_boxes,
                                                                                  patch_save_dir, patch_prefix,
                                                                                  patch_index)
@@ -56,7 +59,7 @@ def extract_negative_patches_from_tumor_wsi(wsi_ops, patch_extractor, patch_inde
         wsi_image, rgb_image, _, tumor_gt_mask, level_used = wsi_ops.read_wsi_tumor(image_path, mask_path)
         assert wsi_image is not None, 'Failed to read Whole Slide Image %s.' % image_path
 
-        bounding_boxes, image_open = wsi_ops.find_roi_bbox(np.array(rgb_image))
+        bounding_boxes, rgb_contour, image_open = wsi_ops.find_roi_bbox(np.array(rgb_image))
 
         patch_index = patch_extractor.extract_negative_patches_from_tumor_wsi(wsi_image, np.array(tumor_gt_mask),
                                                                               image_open, level_used,
@@ -198,7 +201,7 @@ def extract_negative_patches_from_normal_wsi(wsi_ops, patch_extractor, patch_ind
         wsi_image, rgb_image, level_used = wsi_ops.read_wsi_normal(image_path)
         assert wsi_image is not None, 'Failed to read Whole Slide Image %s.' % image_path
 
-        bounding_boxes, image_open = wsi_ops.find_roi_bbox(np.array(rgb_image))
+        bounding_boxes, _, image_open = wsi_ops.find_roi_bbox(np.array(rgb_image))
 
         patch_index = patch_extractor.extract_negative_patches_from_normal_wsi(wsi_image, image_open,
                                                                                level_used,
@@ -215,9 +218,9 @@ def extract_negative_patches_from_normal_wsi(wsi_ops, patch_extractor, patch_ind
 def extract_patches(ops, pe):
     patch_index_positive = utils.PATCH_INDEX_POSITIVE
     patch_index_negative = utils.PATCH_INDEX_NEGATIVE
-    # patch_index_negative = extract_negative_patches_from_tumor_wsi(ops, pe, patch_index_negative)
-    # extract_negative_patches_from_normal_wsi(ops, pe, patch_index_negative)
-    # extract_positive_patches_from_tumor_wsi(ops, pe, patch_index_positive)
+    #patch_index_negative = extract_negative_patches_from_tumor_wsi(ops, pe, patch_index_negative)
+    extract_negative_patches_from_normal_wsi(ops, pe, patch_index_negative)
+    extract_positive_patches_from_tumor_wsi(ops, pe, patch_index_positive)
 
 
 def extract_patches_augmented(ops, pe):
@@ -236,5 +239,5 @@ def extract_patches_augmented(ops, pe):
 
 
 if __name__ == '__main__':
-    extract_patches_augmented(WSIOps(), PatchExtractor())
-    # extract_patches(WSIOps(), PatchExtractor())
+    #extract_patches_augmented(WSIOps(), PatchExtractor())
+    extract_patches(WSIOps(), PatchExtractor())
